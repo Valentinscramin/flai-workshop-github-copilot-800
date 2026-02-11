@@ -4,12 +4,16 @@ from .models import User, Team, Activity, Leaderboard, Workout
 
 class UserSerializer(serializers.ModelSerializer):
     _id = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = '__all__'
 
     def get__id(self, obj):
+        return str(obj._id) if obj._id else None
+    
+    def get_id(self, obj):
         return str(obj._id) if obj._id else None
 
 

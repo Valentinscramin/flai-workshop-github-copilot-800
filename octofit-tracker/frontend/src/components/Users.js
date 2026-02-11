@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import EditUserModal from './EditUserModal';
 
 function Users() {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
     const apiUrl = `https://${process.env.REACT_APP_CODESPACE_NAME}-8000.app.github.dev/api/users/`;
@@ -50,6 +52,21 @@ function Users() {
     return { level: 1, label: 'Iniciante', color: '#94a3b8' };
   };
 
+  const handleEditUser = (e, user) => {
+    e.stopPropagation();
+    setEditingUser(user);
+  };
+
+  const handleSaveUser = (updatedUser) => {
+    setUsers(prevUsers => 
+      prevUsers.map(u => u._id === updatedUser._id ? updatedUser : u)
+    );
+  };
+
+  const handleCloseModal = () => {
+    setEditingUser(null);
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -92,7 +109,7 @@ function Users() {
             
             return (
               <div
-                key={user.id}
+                key={user._id || user.id}
                 className="glass-card"
                 style={{ cursor: 'pointer' }}
                 onClick={() => navigate('/activities')}
@@ -155,27 +172,55 @@ function Users() {
                   </div>
                 </div>
 
-                <div 
-                  onClick={(e) => { e.stopPropagation(); navigate('/leaderboard'); }}
-                  style={{
-                    marginTop: '1rem',
-                    padding: '0.75rem',
-                    background: 'rgba(99, 102, 241, 0.1)',
-                    borderRadius: '12px',
-                    textAlign: 'center',
-                    fontSize: '0.85rem',
-                    fontWeight: '600',
-                    color: 'var(--accent-primary)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Ver no Ranking 🏆
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                  <div 
+                    onClick={(e) => handleEditUser(e, user)}
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem',
+                      background: 'rgba(99, 102, 241, 0.1)',
+                      borderRadius: '12px',
+                      textAlign: 'center',
+                      fontSize: '0.85rem',
+                      fontWeight: '600',
+                      color: 'var(--accent-primary)',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✏️ Editar
+                  </div>
+                  <div 
+                    onClick={(e) => { e.stopPropagation(); navigate('/leaderboard'); }}
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem',
+                      background: 'rgba(34, 197, 94, 0.1)',
+                      borderRadius: '12px',
+                      textAlign: 'center',
+                      fontSize: '0.85rem',
+                      fontWeight: '600',
+                      color: '#22c55e',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🏆 Ranking
+                  </div>
                 </div>
               </div>
             );
           })
         )}
       </div>
+
+      {editingUser && (
+        <EditUserModal
+          user={editingUser}
+          onClose={handleCloseModal}
+          onSave={handleSaveUser}
+        />
+      )}
     </div>
   );
 }

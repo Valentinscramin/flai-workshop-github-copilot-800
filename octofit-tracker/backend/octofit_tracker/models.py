@@ -6,7 +6,23 @@ class User(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     team = models.CharField(max_length=100, null=True, blank=True)
+    
+    # Physical attributes
+    weight = models.FloatField(null=True, blank=True, help_text="Weight in kg")
+    height = models.FloatField(null=True, blank=True, help_text="Height in cm")
+    age = models.IntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=20, null=True, blank=True, choices=[
+        ('M', 'Masculino'),
+        ('F', 'Feminino'),
+        ('O', 'Outro'),
+    ])
+    
+    # Fitness information
+    fitness_goal = models.CharField(max_length=100, null=True, blank=True, help_text="e.g., Perder peso, Ganhar massa, Melhorar resistência")
+    bio = models.TextField(null=True, blank=True, help_text="About the athlete")
+    
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'users'
