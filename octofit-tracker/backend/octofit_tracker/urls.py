@@ -24,7 +24,6 @@ from .views import (
     LeaderboardViewSet,
     WorkoutViewSet,
 )
-import os
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -36,6 +35,5 @@ router.register(r'workouts', WorkoutViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', api_root, name='api-root'),
-    path('api/', api_root, name='api-root'),
     path('api/', include(router.urls)),
 ]
